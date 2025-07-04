@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
 import {
   type ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table';
 
 import {
   Table,
@@ -14,9 +14,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+} from '@/components/ui/table';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -59,7 +59,7 @@ export function DataTable<TData, TValue>({
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                data-state={row.getIsSelected() && "selected"}
+                data-state={row.getIsSelected() && 'selected'}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
@@ -78,29 +78,32 @@ export function DataTable<TData, TValue>({
           {/* Render a row of inputs for each column */}
           <TableRow>
             {columns.map((column, idx) => {
-              // Use id if present, else try to use accessorKey if it exists, else fallback to idx
-              const key =
-                "id" in column && column.id
-                  ? column.id
-                  : "accessorKey" in column &&
-                    typeof column.accessorKey === "string"
-                  ? column.accessorKey
-                  : idx;
-              if (key === "actions") {
-                // Skip the actions column for input row
+              // Prefer id, then accessorKey, then fallback to idx for key
+              let key: string | number = idx;
+              if ('id' in column && column.id) {
+                key = column.id;
+              } else if (
+                'accessorKey' in column &&
+                typeof column.accessorKey === 'string'
+              ) {
+                key = column.accessorKey;
+              }
+
+              // Render a submit button for the actions column
+              if (key === 'actions') {
                 return (
                   <TableCell key="submit">
                     <Button>Submit</Button>
                   </TableCell>
                 );
               }
+
+              // Render an input for all other columns
+              const placeholder =
+                typeof column.header === 'string' ? column.header : '';
               return (
                 <TableCell key={key}>
-                  <Input
-                    placeholder={
-                      typeof column.header === "string" ? column.header : ""
-                    }
-                  />
+                  <Input placeholder={placeholder} />
                 </TableCell>
               );
             })}
