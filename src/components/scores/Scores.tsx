@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { scoreColumns } from "./scores/columns";
-import { DataTable } from "./scores/data-table";
+import { scoreColumns } from "./columns";
+import { DataTable } from "./data-table";
 
 export default function Scores() {
   const [scores, setScores] = useState([]);
