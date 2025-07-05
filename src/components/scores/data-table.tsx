@@ -17,21 +17,39 @@ import {
 } from '@/components/ui/table';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
+import { useState } from 'react';
+import { deleteScore } from '@/lib/api';
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData extends Record<string, any>, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends Record<string, any>, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [inputRow, setInputRow] = useState<Record<string, string>>({});
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // Replace with your actual API endpoint
+    await fetch(
+      'https://s0f0zido6g.execute-api.us-east-1.amazonaws.com/addScore',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(inputRow),
+      }
+    );
+    // Optionally clear the form or refresh data
+    setInputRow({});
+  };
 
   return (
     <div className="rounded-md border">
@@ -62,10 +80,36 @@ export function DataTable<TData, TValue>({
                 data-state={row.getIsSelected() && 'selected'}
               >
                 {row.getVisibleCells().map((cell) => (
+                  // Render column defined cell
                   <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
+                <TableCell>
+                  <Button
+                    variant={'secondary'}
+                    onClick={() =>
+                      setInputRow(
+                        Object.fromEntries(
+                          Object.entries(row.original).map(([k, v]) => [
+                            k,
+                            v == null ? '' : String(v),
+                          ])
+                        )
+                      )
+                    }
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant={'destructive'}
+                    onClick={() => {
+                      deleteScore(row.getValue('primary_key'));
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
               </TableRow>
             ))
           ) : (
@@ -75,41 +119,51 @@ export function DataTable<TData, TValue>({
               </TableCell>
             </TableRow>
           )}
-          {/* Render a row of inputs for each column */}
-          <TableRow>
-            {columns.map((column, idx) => {
-              // Prefer id, then accessorKey, then fallback to idx for key
-              let key: string | number = idx;
-              if ('id' in column && column.id) {
-                key = column.id;
-              } else if (
-                'accessorKey' in column &&
-                typeof column.accessorKey === 'string'
-              ) {
-                key = column.accessorKey;
-              }
-
-              // Render a submit button for the actions column
-              if (key === 'actions') {
-                return (
-                  <TableCell key="submit">
-                    <Button>Submit</Button>
-                  </TableCell>
-                );
-              }
-
-              // Render an input for all other columns
-              const placeholder =
-                typeof column.header === 'string' ? column.header : '';
-              return (
-                <TableCell key={key}>
-                  <Input placeholder={placeholder} />
-                </TableCell>
-              );
-            })}
-          </TableRow>
+          {/* End of table body */}
         </TableBody>
       </Table>
+      {/*
+        The input row is a second table because HTML forbids <form> in <tr>/<tbody>.
+        This keeps markup valid and ensures only the input row submits the form.
+        The Edit button fills the input row, so you can submit changes with the form below.
+      */}
+      <form onSubmit={handleSubmit} className="w-full">
+        <Table className="w-full border-t">
+          <TableBody>
+            <TableRow>
+              {columns.map((column, idx) => {
+                let key: string | number = idx;
+                if ('id' in column && column.id) {
+                  key = column.id;
+                } else if (
+                  'accessorKey' in column &&
+                  typeof column.accessorKey === 'string'
+                ) {
+                  key = column.accessorKey;
+                }
+
+                const placeholder =
+                  typeof column.header === 'string' ? column.header : '';
+                return (
+                  <TableCell key={key}>
+                    <Input
+                      value={inputRow[key] || ''}
+                      onChange={(e) =>
+                        setInputRow({ ...inputRow, [key]: e.target.value })
+                      }
+                      placeholder={placeholder}
+                    />
+                  </TableCell>
+                );
+              })}
+              {/* Add submit button at the end of the row */}
+              <TableCell key="submit">
+                <Button type="submit">Submit</Button>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </form>
     </div>
   );
 }

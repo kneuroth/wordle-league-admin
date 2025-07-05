@@ -33,18 +33,4 @@ export const scoreColumns: ColumnDef<Score>[] = [
     accessorKey: 'chat_id',
     header: 'Chat ID',
   },
-  {
-    id: 'actions',
-    header: 'Actions',
-    cell: ({ row }) => (
-      <Button
-        variant={'destructive'}
-        onClick={() => {
-          deleteScore(row.getValue('primary_key'));
-        }}
-      >
-        Delete
-      </Button>
-    ),
-  },
 ];
