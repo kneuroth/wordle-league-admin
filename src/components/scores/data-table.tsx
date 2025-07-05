@@ -40,7 +40,7 @@ export function DataTable<TData extends Record<string, any>, TValue>({
     e.preventDefault();
     // Replace with your actual API endpoint
     await fetch(
-      'https://s0f0zido6g.execute-api.us-east-1.amazonaws.com/addScore',
+      'https://s0f0zido6g.execute-api.us-east-1.amazonaws.com/score',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

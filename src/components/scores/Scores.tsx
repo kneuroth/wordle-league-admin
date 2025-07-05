@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { scoreColumns } from "./columns";
-import { DataTable } from "./data-table";
+import { useState, useEffect } from 'react';
+import { scoreColumns } from './columns';
+import { DataTable } from './data-table';
 
 export default function Scores() {
   const [scores, setScores] = useState([]);
@@ -8,9 +8,9 @@ export default function Scores() {
   const [err, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    fetch("https://s0f0zido6g.execute-api.us-east-1.amazonaws.com/getScores")
+    fetch('https://s0f0zido6g.execute-api.us-east-1.amazonaws.com/scores')
       .then((res) => {
-        if (!res.ok) throw new Error("Network response was not ok");
+        if (!res.ok) throw new Error('Network response was not ok');
         return res.json();
       })
       .then((json) => setScores(json))
