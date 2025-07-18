@@ -17,10 +17,6 @@ export const scoreColumns: ColumnDef<Score>[] = [
     header: 'Date',
   },
   {
-    accessorKey: 'primary_key',
-    header: 'Primary Key',
-  },
-  {
     accessorKey: 'player_id',
     header: 'Player ID',
   },

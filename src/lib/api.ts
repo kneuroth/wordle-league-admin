@@ -1,5 +1,5 @@
-export async function deleteScore(primaryKey: string): Promise<void> {
-  const url = `https://s0f0zido6g.execute-api.us-east-1.amazonaws.com/score/${primaryKey}`;
+export async function deleteScore(playerId: string, chat_Id: string, date: string): Promise<void> {
+  const url = `https://s0f0zido6g.execute-api.us-east-1.amazonaws.com/score?player_id=${playerId}&chat_id=${chat_Id}&date=${date}`;
   try {
     const response = await fetch(url, {
       method: "DELETE",

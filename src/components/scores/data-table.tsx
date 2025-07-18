@@ -104,7 +104,11 @@ export function DataTable<TData extends Record<string, any>, TValue>({
                   <Button
                     variant={'destructive'}
                     onClick={() => {
-                      deleteScore(row.getValue('primary_key'));
+                      deleteScore(
+                        row.getValue('player_id'),
+                        row.getValue('chat_id'),
+                        row.getValue('date')
+                      );
                     }}
                   >
                     Delete
