@@ -3,6 +3,7 @@
 import type { Score } from '@/models/Score';
 import type { ColumnDef } from '@tanstack/react-table';
 
+// Use zod??
 export const scoreColumns: ColumnDef<Score>[] = [
   {
     accessorKey: 'player_name',

@@ -17,8 +17,8 @@ import {
 } from '@/components/ui/table';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { useState } from 'react';
-import { deleteScore } from '@/lib/api';
+import { useState, useMemo } from 'react';
+import { deleteScore, addScore } from '@/lib/api';
 
 interface DataTableProps<TData extends Record<string, any>, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -30,29 +30,64 @@ export function DataTable<TData extends Record<string, any>, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [inputRow, setInputRow] = useState<Record<string, string>>({});
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+
+  // filter data by date range (expects `date` field parsable by Date)
+  const filteredData = useMemo(() => {
+    if (!startDate && !endDate) return data;
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+    return data.filter((row) => {
+      const d = new Date(String((row as any).date));
+      if (isNaN(d.getTime())) return false;
+      if (start && d < start) return false;
+      if (end && d > end) return false;
+      return true;
+    });
+  }, [data, startDate, endDate]);
+
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Replace with your actual API endpoint
-    await fetch(
-      'https://s0f0zido6g.execute-api.us-east-1.amazonaws.com/score',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(inputRow),
-      }
-    );
+    // POST to API via api helper
+    await addScore(inputRow);
     // Optionally clear the form or refresh data
     setInputRow({});
   };
 
   return (
     <div className="rounded-md border">
+      <div className="p-2 flex gap-2 items-center">
+        <label className="text-sm">Start</label>
+        <input
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          className="border rounded px-2 py-1"
+        />
+        <label className="text-sm">End</label>
+        <input
+          type="date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          className="border rounded px-2 py-1"
+        />
+        <Button
+          type="button"
+          onClick={() => {
+            setStartDate('');
+            setEndDate('');
+          }}
+        >
+          Clear
+        </Button>
+      </div>
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

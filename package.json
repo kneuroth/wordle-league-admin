@@ -5,9 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start:dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start:prod": "npm run build && npm run preview",
+    "start": "npm run start:dev",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",

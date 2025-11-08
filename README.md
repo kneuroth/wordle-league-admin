@@ -4,9 +4,6 @@ This template provides a minimal setup to get React working in Vite with HMR and
 
 Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
@@ -36,7 +33,7 @@ export default tseslint.config([
       // other options...
     },
   },
-])
+]);
 ```
 
 You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
@@ -66,4 +63,37 @@ export default tseslint.config([
     },
   },
 ])
+
+## Environment variables
+
+This project uses Vite. Client-exposed env variables must be prefixed with `VITE_`.
+
+- Dev file: `.env`
+- Production file: `.env.production`
+
+Example vars added in this repo:
+
+```
+
+VITE_API_BASE=https://your-api-base.example.com
+
+````
+
+Access env values via a small wrapper at `src/lib/env.ts` (recommended):
+
+```ts
+import { getApiBase } from '@/lib/env';
+fetch(`${getApiBase()}/scores`);
+````
+
+If you need to override values at deploy time without rebuilding, inject a runtime config in `index.html`:
+
+```html
+<script>
+  window.__APP_CONFIG__ = { API_BASE: 'https://override.example.com' };
+</script>
+```
+
+```
+
 ```
