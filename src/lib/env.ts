@@ -3,8 +3,12 @@
 
 const runtime = typeof window !== 'undefined' ? (window as any).__APP_CONFIG__ || {} : {};
 
-export const API_BASE: string =
-  runtime.API_BASE || (import.meta.env.VITE_API_BASE as string) || 'https://mlprqsmumc.execute-api.us-east-1.amazonaws.com';
+// No hardcoded fallback: the build must be run with --mode dev or --mode prod (see vite.config.ts).
+export const API_BASE: string = runtime.API_BASE || (import.meta.env.VITE_API_BASE as string);
+
+if (!API_BASE) {
+  throw new Error('API_BASE is not configured. Build/run with --mode dev or --mode prod.');
+}
 
 export const IS_DEV = import.meta.env.DEV === true;
 export const IS_PROD = import.meta.env.PROD === true;

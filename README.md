@@ -68,8 +68,17 @@ export default tseslint.config([
 
 This project uses Vite. Client-exposed env variables must be prefixed with `VITE_`.
 
-- Dev file: `.env`
-- Production file: `.env.production`
+You must pick an environment — running Vite without `--mode dev` or `--mode prod` fails.
+
+| Command              | Target API |
+| -------------------- | ---------- |
+| `npm run start:dev`  | dev        |
+| `npm run start:prod` | prod       |
+| `npm run build:dev`  | dev        |
+| `npm run build:prod` | prod       |
+
+- Dev file: `.env.dev`
+- Prod file: `.env.prod`
 
 Example vars added in this repo:
 
